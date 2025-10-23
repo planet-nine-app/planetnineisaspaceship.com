@@ -1,0 +1,14 @@
+{
+  "name": "planetnineisaspaceship",
+  "version": "1.0.0",
+  "description": "Interactive 3D visualization of Planet Nine as a spaceship",
+  "main": "script.js",
+  "type": "module",
+  "scripts": {
+    "start": "node serve.js",
+    "dev": "node serve.js"
+  },
+  "keywords": ["planet-nine", "threejs", "3d", "visualization"],
+  "author": "",
+  "license": "MIT"
+}

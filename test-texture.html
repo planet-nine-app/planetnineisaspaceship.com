@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Texture Preview</title>
+    <style>
+        body {
+            background: #222;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        img {
+            width: 100%;
+            max-width: 1024px;
+            border: 2px solid #0f0;
+            display: block;
+            margin: 20px auto;
+        }
+        h1 {
+            text-align: center;
+        }
+        .info {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Planet Nine Texture Preview</h1>
+    <div class="info">
+        <p>This is how your SVG texture will look when mapped onto the sphere:</p>
+        <ul>
+            <li><strong>Left half (black):</strong> The glossy screen side</li>
+            <li><strong>Right half (purple):</strong> The ocean side with green shapes</li>
+        </ul>
+        <p>The sphere UV mapping will wrap this horizontally around the planet.</p>
+    </div>
+    <img src="texture.svg" alt="Planet Nine Texture">
+</body>
+</html>
