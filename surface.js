@@ -11,47 +11,33 @@ export class Surface {
     }
 
     createClickableContinents() {
-        // Continent positions matching the SVG texture layout
-        // The SVG right side spans from 1024-2048 horizontally (0-1024 vertically)
-        // We need to map these to sphere coordinates on the back half
-
-        const continentData = [
+        // Button positions matching the SVG texture layout on the purple side
+        const buttonData = [
             {
-                name: 'The Stack',
-                url: 'https://github.com/planet-nine-app/planet-nine/blob/main/The%20Stack.md',
-                // Northwestern position - left side of purple canvas
-                lat: 43,
-                lon: 185,
-                size: 0.6
+                name: 'App Store',
+                url: 'https://testflight.apple.com/join/zEZEJTqa',
+                lat: 25,
+                lon: 180,
+                size: 0.5
             },
             {
-                name: 'allyabase',
-                url: 'https://github.com/planet-nine-app/allyabase',
-                // Northeastern position - right side of purple canvas
-                lat: 43,
-                lon: 95,
-                size: 0.7
+                name: 'Play Store',
+                url: 'mailto:zach@the-advancement.com',
+                lat: -5,
+                lon: 180,
+                size: 0.5
             },
             {
-                name: 'The Advancement',
-                url: 'https://github.com/planet-nine-app/the-advancement',
-                // Southwestern position - left side of purple canvas
-                lat: -22,
-                lon: 185,
-                size: 0.6
-            },
-            {
-                name: 'The Nullary',
-                url: 'https://github.com/planet-nine-app/the-nullary',
-                // Southeastern position - right side of purple canvas
-                lat: -22,
-                lon: 95,
-                size: 0.7
+                name: 'Browser',
+                url: 'https://app.planetnine.app',
+                lat: -35,
+                lon: 180,
+                size: 0.5
             }
         ];
 
-        continentData.forEach(continent => {
-            this.createClickableContinent(continent);
+        buttonData.forEach(button => {
+            this.createClickableContinent(button);
         });
     }
 
@@ -65,13 +51,12 @@ export class Surface {
         const y = radius * Math.cos(phi);
         const z = -radius * Math.sin(phi) * Math.sin(theta);
 
-        // Create clickable plane (semi-transparent for debugging)
+        // Create invisible clickable plane
         const size = continent.size || 0.5;
         const continentGeometry = new THREE.CircleGeometry(size, 16);
         const continentMaterial = new THREE.MeshBasicMaterial({
-            color: 0xff0000,
             transparent: true,
-            opacity: 0.3, // Make visible for debugging
+            opacity: 0,
             side: THREE.DoubleSide
         });
 

@@ -7,11 +7,19 @@ export class Monitor {
         this.textCanvas = null;
         this.textContext = null;
         this.textTexture = null;
-        
-        this.typewriterText = "Hello World";
+
+        // Multiple lines of text
+        this.textLines = [
+            "Hello Humans",
+            "We need to talk. You are on a bit of a precipice. We would like to party with you, but it is hard to trust you will do the four things.",
+            "This is an offering from The Advancement. How you use it is up to you.",
+            "But 👽 believe in you 🙂"
+        ];
+
+        // Track display state for each line
+        this.displayLines = ["", "", "", ""];
         this.typewriterIndex = 0;
-        this.typewriterDisplay = "";
-        
+
         this.init();
     }
     
@@ -37,61 +45,115 @@ export class Monitor {
     
     createTextCanvas() {
         const canvas = document.createElement('canvas');
-        canvas.width = 512;
-        canvas.height = 512;
+        canvas.width = 1024;
+        canvas.height = 1024;
         const ctx = canvas.getContext('2d');
-        
+
         this.textCanvas = canvas;
         this.textContext = ctx;
-        
+
         this.textTexture = new THREE.CanvasTexture(canvas);
-        
+
         const textMaterial = new THREE.MeshBasicMaterial({
             map: this.textTexture,
             transparent: true,
             opacity: 0.9
         });
-        
-        const textGeometry = new THREE.PlaneGeometry(1.5, 1.5);
+
+        const textGeometry = new THREE.PlaneGeometry(2, 2);
         this.textMesh = new THREE.Mesh(textGeometry, textMaterial);
-        this.textMesh.position.set(0, 0, 2.1);
-        
+        this.textMesh.position.set(0, 0, 2.05);
+
         this.sphere.add(this.textMesh);
     }
     
     updateTextCanvas() {
         const ctx = this.textContext;
         const canvas = this.textCanvas;
-        
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
+
         ctx.fillStyle = '#00ff00';
-        ctx.font = 'bold 32px Courier New';
+        ctx.font = 'bold 48px Courier New';
         ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        
+        ctx.textBaseline = 'top';
+
         ctx.shadowColor = '#00ff00';
-        ctx.shadowBlur = 10;
-        
-        ctx.fillText(this.typewriterDisplay + '█', canvas.width / 2, canvas.height / 2);
-        
+        ctx.shadowBlur = 15;
+
+        const lineHeight = 50;
+        const maxWidth = canvas.width - 100; // Padding on sides
+        let currentY = canvas.height / 2 - 300; // Start position for first line (moved up)
+
+        // Render each line with word wrapping and custom spacing
+        this.displayLines.forEach((line, index) => {
+            if (line.length > 0) {
+                const wrappedLines = this.wrapText(ctx, line, maxWidth);
+                wrappedLines.forEach(wrappedLine => {
+                    ctx.fillText(wrappedLine, canvas.width / 2, currentY);
+                    currentY += lineHeight;
+                });
+            }
+
+            // Custom spacing between sections
+            if (index === 0) {
+                // Extra space after first line
+                currentY += lineHeight * 1.5;
+            } else if (index === 1) {
+                // Normal space after second line
+                currentY += lineHeight * 1.5;
+            } else if (index === 2) {
+                // Extra space before last line (moved down more)
+                currentY += lineHeight * 1.5;
+            }
+        });
+
         this.textTexture.needsUpdate = true;
+    }
+
+    wrapText(ctx, text, maxWidth) {
+        const words = text.split(' ');
+        const lines = [];
+        let currentLine = '';
+
+        words.forEach(word => {
+            const testLine = currentLine + (currentLine ? ' ' : '') + word;
+            const metrics = ctx.measureText(testLine);
+
+            if (metrics.width > maxWidth && currentLine) {
+                lines.push(currentLine);
+                currentLine = word;
+            } else {
+                currentLine = testLine;
+            }
+        });
+
+        if (currentLine) {
+            lines.push(currentLine);
+        }
+
+        return lines;
     }
     
     startTypewriter() {
+        // Find the longest text to know when to stop
+        const maxLength = Math.max(...this.textLines.map(line => line.length));
+
         const typeInterval = setInterval(() => {
-            if (this.typewriterIndex < this.typewriterText.length) {
-                this.typewriterDisplay += this.typewriterText[this.typewriterIndex];
+            if (this.typewriterIndex < maxLength) {
+                // Update each line simultaneously
+                this.textLines.forEach((line, index) => {
+                    if (this.typewriterIndex < line.length) {
+                        this.displayLines[index] = line.substring(0, this.typewriterIndex + 1);
+                    }
+                });
+
                 this.typewriterIndex++;
                 this.updateTextCanvas();
             } else {
                 clearInterval(typeInterval);
-                setTimeout(() => {
-                    this.typewriterDisplay = this.typewriterText;
-                    this.updateTextCanvas();
-                }, 1000);
             }
-        }, 100);
+        }, 50); // Speed of typing (milliseconds per character)
     }
     
     updateRotation(rotationX, rotationY) {
